@@ -1,0 +1,21 @@
+---
+layout: default
+---
+<h1> ATKearney: Complete ETL and Cloud Analytic Solution for Online Patent Data </h1>
+
+<h2><b>Tech Stack: Python, Scrapy, AWS ElasticMapReduce, Apache Hive, HiveQL, xPATH, AWS S3. </b> </h2>
+
+<h3> <b> Project Affiliation: Capstone Project for ATKearney @Carnegie Mellon University, under Prof. TK Lim, Prof. Shyam Kekre, Prof. Sundar Kekre. </h3>
+
+<h3> As part of my final semester capstone project at CMU, I was assigned to work for a client of ATKearney who wanted analyze certain patent behavior utilizing technology. They were also looking for recommendations based on certain criterion which I cannot disclose, but can provide an overview of the technical challenge that was proposed and the solution that I came up with. </h3>
+
+<h3> Imagine trying to analyze trends or coming up with an analysis, without having any data to do so. It was a tough job as I had to first source the relevant data as what were looking for was a relatively new field with no dataset available from the client side. The client wanted to understand whats going on in the field of patents for a particular technology and which of their competitors were doing what with that technology. </h3>
+
+<h3> I decided to scour the internet and find relevant and new data that can be used in the analysis for the same. I came across three really good data sources for patents which were: lens.org, USPTO and US PAIR. Two of these were government organizations that provided open source data about patents and their inventors. <h3>
+
+<h3> I wanted to form an ETL pipeline and provide an analytical interface like SQL for the client to use so that post our engagement, they can still perform the analysis on their own. I also wanted to host this on the cloud as I did not want to think about provisioning servers and infra redundancy as the data was going to be pretty big, possible over 200000 entries which were each quite detailed. Also, for such an analytic solution, I wanted to rely on a relational database system as I perfectly knew what the schema of the data was going to look like and it was highly unlikely that the schema was going to change anytime soon. </h3>
+
+<h3> I came up with a solution diagram as shown below: </h3>
+
+<img src = "https://1.bp.blogspot.com/-EcVO6yb9nbk/W-Wq_xtdI_I/AAAAAAAAAEY/-KV6Akf0DXsVuyJ0OzZVTAfHKDpuQJvtgCLcBGAs/s1600/systemhive.png" >
+
