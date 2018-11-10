@@ -1,7 +1,7 @@
 ---
 layout: default
 ---
-<h1> ATKearney: Complete ETL and Cloud Analytic Solution for Online Patent Data </h1>
+<h1> ATKearney: Complete ETL, Data Warehousing & Cloud Analytic Solution for Online Patent Data </h1>
 
 <h2><b>Tech Stack: Python, Scrapy, AWS ElasticMapReduce, Apache Hive, HiveQL, xPATH, AWS S3. </b> </h2>
 
@@ -18,4 +18,46 @@ layout: default
 <h3> I came up with a solution diagram as shown below: </h3>
 
 <img src = "https://2.bp.blogspot.com/-rUxp3p7huXI/W-cowszcgCI/AAAAAAAAAFI/m7jeUhRg5ZslKlZvygnVxOGT6Sug9hrVgCLcBGAs/s1600/ATK.png" >
+
+<h3> First technical task was to actually assemble the data that needs to put into a new warehouse. My choice of warehouse for this client was Hive, which I set up on top of AWS EMR. I built different scraper programs that gracefully and without putting a lot of load on web servers, gained all the data I needed. </h3>
+  
+<h3> Here is a snippet of the python program I used to gain data from Lens: </h3>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">query <span style="color: #333333">=</span> query.<span style="color: #008800; font-weight: bold">replace</span>(<span style="color: #AA6600">&quot;(&quot;</span>, <span style="color: #AA6600">&quot;%28&quot;</span>)
+
+<span style="color: #008800; font-weight: bold">from</span> fullpath import path
+
+<span style="color: #008800; font-weight: bold">class</span> S1(Spider):
+    name <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;s1&#39;</span>
+    start_urls <span style="color: #333333">=</span> [<span style="color: #AA6600">&quot;https://www.lens.org/lens/search?q=blockchain%20payments&amp;v=table&amp;p=0&amp;n=50&quot;</span>]
+    custom_settings <span style="color: #333333">=</span> <span style="color: #FF0000; background-color: #FFAAAA">{</span> <span style="background-color: #fff0f0">&#39;DOWNLOAD_DELAY&#39;</span>: <span style="color: #0000DD; font-weight: bold">0</span>.<span style="color: #0000DD; font-weight: bold">5</span> <span style="color: #FF0000; background-color: #FFAAAA">}</span>
+    def parse(<span style="color: #008800; font-weight: bold">self</span>, response):
+        <span style="color: #008800; font-weight: bold">names</span> <span style="color: #333333">=</span> response.xpath(<span style="background-color: #fff0f0">&#39;//header&#39;</span>)
+        ans<span style="color: #333333">=</span>[]
+        <span style="color: #008800; font-weight: bold">for</span> name <span style="color: #008800; font-weight: bold">in</span> <span style="color: #008800; font-weight: bold">names</span>[<span style="color: #0000DD; font-weight: bold">2</span>:<span style="color: #0000DD; font-weight: bold">27</span>]:
+            item <span style="color: #333333">=</span> <span style="color: #FF0000; background-color: #FFAAAA">{}</span>
+            item[<span style="background-color: #fff0f0">&#39;Title&#39;</span>] <span style="color: #333333">=</span> name.xpath(<span style="color: #AA6600">&quot;./div[@class=&#39;listing-header clearfix&#39;]/div[@class=&#39;listing-with-sidebar&#39;]/h3/a/text()&quot;</span>).<span style="color: #008800; font-weight: bold">extract</span>()[<span style="color: #0000DD; font-weight: bold">0</span>]
+            item[<span style="background-color: #fff0f0">&#39;url&#39;</span>] <span style="color: #333333">=</span> name.xpath(<span style="color: #AA6600">&quot;./div[@class=&#39;listing-header clearfix&#39;]/div[@class=&#39;listing-with-sidebar&#39;]/h3/a/@href&quot;</span>).<span style="color: #008800; font-weight: bold">extract</span>()[<span style="color: #0000DD; font-weight: bold">0</span>]
+</pre></div>
+
+  <h3> Here is a snippet of the python program I used to pull data from USPTO and Pair. </h3>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%">def parse_2(<span style="color: #008800; font-weight: bold">self</span>, response):
+        <span style="color: #333333">#</span> <span style="color: #008800; font-weight: bold">structure</span> <span style="color: #008800; font-weight: bold">of</span> the files handled <span style="color: #008800; font-weight: bold">by</span> parse_2
+        <span style="color: #333333">#</span> <span style="color: #333333">/</span>html<span style="color: #333333">/</span>body<span style="color: #333333">/</span>ul<span style="color: #333333">/</span>li[<span style="color: #333333">@</span><span style="color: #008800; font-weight: bold">class</span><span style="color: #333333">=</span><span style="color: #AA6600">&quot;first&quot;</span>]
+        it <span style="color: #333333">=</span> response.meta[<span style="background-color: #fff0f0">&#39;foo&#39;</span>]
+        <span style="color: #008800; font-weight: bold">first</span> <span style="color: #333333">=</span> response.xpath(<span style="background-color: #fff0f0">&#39;//p[1]/text()&#39;</span>).<span style="color: #008800; font-weight: bold">extract</span>()
+        <span style="color: #008800; font-weight: bold">second</span> <span style="color: #333333">=</span> response.xpath(<span style="background-color: #fff0f0">&#39;//tr[3]/td/b/text()&#39;</span>)[<span style="color: #0000DD; font-weight: bold">0</span>].<span style="color: #008800; font-weight: bold">extract</span>()
+        third <span style="color: #333333">=</span> response.xpath(<span style="background-color: #fff0f0">&#39;//coma/text()&#39;</span>).<span style="color: #008800; font-weight: bold">extract</span>()
+        fourth <span style="color: #333333">=</span> response.xpath(<span style="background-color: #fff0f0">&#39;//tr[2]/td[2]&#39;</span>).<span style="color: #008800; font-weight: bold">extract</span>()
+        it[<span style="background-color: #fff0f0">&#39;Abstract&#39;</span>] <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">first</span>
+        it[<span style="background-color: #fff0f0">&#39;Company&#39;</span>] <span style="color: #333333">=</span> <span style="color: #008800; font-weight: bold">second</span>
+        <span style="color: #008800; font-weight: bold">for</span> x <span style="color: #008800; font-weight: bold">in</span> fourth:
+            if len(x) <span style="color: #333333">&gt;</span> <span style="color: #0000DD; font-weight: bold">40</span>:
+                pull <span style="color: #333333">=</span> x[<span style="color: #0000DD; font-weight: bold">43</span>:len(x)<span style="color: #333333">-</span><span style="color: #0000DD; font-weight: bold">5</span>]
+        pull <span style="color: #333333">=</span> pull.<span style="color: #008800; font-weight: bold">replace</span>(<span style="color: #AA6600">&quot;&amp;amp;nbsp&quot;</span>,<span style="color: #AA6600">&quot;&quot;</span>)
+</pre></div>
+
+  <h3> Upon getting this data in the form of textfiles, I had to aggregate them to a single storage area and I chose AWS S3 as it is easier to import this data to a data warehouse such as Hive on EMR. Post this, I spun up an EMR with 3 nodes, 1 Master and 2 Data nodes which already had Apache HIVE installed. I used m4.large instances for the same. I was planning to size up as when I needed to in order to maintain the AWS costs. </h3>
+  
 
