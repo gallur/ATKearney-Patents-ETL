@@ -3,23 +3,23 @@ layout: default
 ---
 <h1> ATKearney: Complete ETL, Data Warehousing & Cloud Analytic Solution for Online Patent Data </h1>
 
-<h2><b>Tech Stack: Python, Scrapy, AWS ElasticMapReduce, Apache Hive, HiveQL, xPATH, AWS S3. </b> </h2>
+<h2><b>Tech Stack: Python, Scrapy, AWS Redshift, Postgres, Aginity Workbench, xPATH, AWS S3. </b> </h2>
 
 <h3> <b> Project Affiliation: Capstone Project for ATKearney @Carnegie Mellon University, under Prof. TK Lim, Prof. Shyam Kekre, Prof. Sundar Kekre. </h3>
 
-<h3> As part of my final semester capstone project at CMU, I was assigned to work for a client of ATKearney who wanted analyze certain patent behavior utilizing technology. They were also looking for recommendations based on certain criterion which I cannot disclose, but can provide an overview of the technical challenge that was proposed and the solution that I came up with. </h3>
+<h3> As part of my final semester capstone project at CMU, I was assigned to work for a client of ATKearney who wanted analyze certain patent behavior utilizing technology. They were also looking for recommendations based on certain criterion which I cannot disclose, but can provide an overview of the technical challenge that was posed and the solution that I came up with. </h3>
 
-<h3> Imagine trying to analyze trends or coming up with an analysis, without having any data to do so. It was a tough job as I had to first source the relevant data as what were looking for was a relatively new field with no dataset available from the client side. The client wanted to understand whats going on in the field of patents for a particular technology and which of their competitors were doing what with that technology. </h3>
+<h3> Imagine trying to analyze trends or coming up with an analysis, without having any data to do so. It was a tough job as I had to first source the relevant data as what we were looking for was a relatively new field in technology with no dataset available from the client side. The client wanted to understand what was going on in the field of patents for a particular technology and which of their competitors were doing what with respect to that technology. </h3>
 
 <h3> I decided to scour the internet and find relevant and new data that can be used in the analysis for the same. I came across three really good data sources for patents which were: lens.org, USPTO and US PAIR. Two of these were government organizations that provided open source data about patents and their inventors. <h3>
 
-<h3> I wanted to form an ETL pipeline and provide an analytical interface like SQL for the client to use so that post our engagement, they can still perform the analysis on their own. I also wanted to host this on the cloud as I did not want to think about provisioning servers and infra redundancy as the data was going to be pretty big, possible over 200000 entries which were each quite detailed. Also, for such an analytic solution, I wanted to rely on a relational database system as I perfectly knew what the schema of the data was going to look like and it was highly unlikely that the schema was going to change anytime soon. </h3>
+<h3> I wanted to extract data, transform it and load it into a data warehouse such as Amazon's managed data warehouse Redshift and provide an analytical interface like SQL for the client to use so that post our engagement, they can still perform the analysis on their own. I wanted to host this on the cloud as I did not want to think about provisioning servers and infra redundancy as the data was going to be pretty big, possible over 200000 entries which were each quite detailed. Also, for such an analytic solution, I wanted to rely on a relational database system as I perfectly knew what the schema of the data was going to look like and it was highly unlikely that the schema was going to change anytime soon. Another reason for choosing a relational database was that the client was looking to perform transactional queries and not batch processing queries.</h3>
 
 <h3> I came up with a solution diagram as shown below: </h3>
 
-<img src = "https://2.bp.blogspot.com/-rUxp3p7huXI/W-cowszcgCI/AAAAAAAAAFI/m7jeUhRg5ZslKlZvygnVxOGT6Sug9hrVgCLcBGAs/s1600/ATK.png" >
+<img src = "https://2.bp.blogspot.com/-cqWoJCYQfr8/W-em6wJFewI/AAAAAAAAAFg/btxLMMvNvIsIEmvcdxFJ-UzX94vVbYy-gCLcBGAs/s1600/ATK.png" >
 
-<h3> First technical task was to actually assemble the data that needs to put into a new warehouse. My choice of warehouse for this client was Hive, which I set up on top of AWS EMR. I built different scraper programs that gracefully and without putting a lot of load on web servers, gained all the data I needed. </h3>
+<h3> First technical task was to actually assemble the data that needs to put into a new warehouse. My choice of warehouse for this client was AWS Redshift. I built different scraper programs that gracefully and without putting a lot of load on web servers, gained all the data I needed. </h3>
   
 <h3> Here is a snippet of the python program I used to gain data from Lens: </h3>
   
@@ -58,6 +58,16 @@ layout: default
         pull <span style="color: #333333">=</span> pull.<span style="color: #008800; font-weight: bold">replace</span>(<span style="color: #AA6600">&quot;&amp;amp;nbsp&quot;</span>,<span style="color: #AA6600">&quot;&quot;</span>)
 </pre></div>
 
-  <h3> Upon getting this data in the form of textfiles, I had to aggregate them to a single storage area and I chose AWS S3 as it is easier to import this data to a data warehouse such as Hive on EMR. Post this, I spun up an EMR with 3 nodes, 1 Master and 2 Data nodes which already had Apache HIVE installed. I used m4.large instances for the same. I was planning to size up as when I needed to in order to maintain the AWS costs. </h3>
+  <h3> Upon getting this data in the form of textfiles, I had to aggregate them to a single storage area and I chose AWS S3 as it is easier to import this data to a data warehouse such as Redshift. </h3>
+  
+  <h3> The text files looked like below when I opened them in Excel for ease. There are about 200000+ rows when all the files are combined and ther are about 15+ columns for each row. </h3>
+  
+  <img src="https://3.bp.blogspot.com/-L81mUYUmnVs/W-epe_UkOPI/AAAAAAAAAF4/TZqMEICyUEo6C9KAZ03V0kP7QCLz3VxpQCLcBGAs/s1600/ATK.png">
+  
+  <h3> I set up a Redshift cluster with 4 nodes in a Multi-node architecture set up. Here, one of my nodes was the Leader node which was to perform the planning of query execution, code compilation and code distribution to the specific compute nodes which have the data. I chose to use the dc2.large instances as I was planning to have less than 500GB of data so I felt the dense storage node option might become overkill for this operation. I created a database called as "patents" which will hold all the patent information. </h3>
+  
+  <h3> Surprisingly, AWS does not provide a query editor for download, hence I decided to use the Aginity workbench. I downloaded the workbench and connected to the new database that I have created over the 5439 port. I had to create new entries in my existing security group to ensure that this connection was allowed. </h3>
+  
+  
   
 
