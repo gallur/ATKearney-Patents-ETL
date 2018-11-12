@@ -87,6 +87,13 @@ credentials <span style="background-color: #fff0f0">&#39;aws_iam_role=arn:aws:ia
 <span style="color: #008800; font-weight: bold">AND</span> cited_count <span style="color: #333333">&gt;</span> <span style="color: #6600EE; font-weight: bold">2</span>
 <span style="color: #008800; font-weight: bold">AND</span> classification <span style="color: #008800; font-weight: bold">like</span> <span style="background-color: #fff0f0">&#39;%G06%&#39;</span>;
 </pre></div>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">SELECT</span> applicants, count(Title),<span style="color: #008800; font-weight: bold">RIGHT</span>(publication_date,<span style="color: #6600EE; font-weight: bold">4</span>) <span style="color: #008800; font-weight: bold">AS</span> <span style="background-color: #fff0f0">&quot;Year1&quot;</span>
+<span style="color: #008800; font-weight: bold">FROM</span> patents
+<span style="color: #008800; font-weight: bold">GROUP</span> <span style="color: #008800; font-weight: bold">BY</span> applicants,Year1
+<span style="color: #008800; font-weight: bold">ORDER</span> <span style="color: #008800; font-weight: bold">BY</span> applicants,Year1
+</pre></div>
+
 
   <h3> I also provided documentation to the client as to how they can add data, remove data and how they can look to expand the solution which is based on AWS. </h3>
   
