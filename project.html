@@ -68,6 +68,28 @@ layout: default
   
   <h3> Surprisingly, AWS does not provide a query editor for download, hence I decided to use the Aginity workbench. I downloaded the workbench and connected to the new database that I have created over the 5439 port. I had to create new entries in my existing security group to ensure that this connection was allowed. </h3>
   
+  <h3> There were several issues while loading data from S3 to Redshift mainly because some of the data was not formatted properly and hence was not satisfying the constraints of the table that I had created. This involved cleaning up some dirty characters and removing "," from several of the strings so that it does not affect the delimiter. I was looking into the pg_catalog and the table for load errors to find why my data was misbehaving. </h3>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">SELECT</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">from</span> pg_catalog<span style="color: #6600EE; font-weight: bold">.</span>stl_load_errors;
+</pre></div>
+
+  <h3> After fixing and cleaning the data, I was able to load the data onto the newly created tables in RedShift using the following: </h3>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">copy</span> patents <span style="color: #008800; font-weight: bold">from</span> <span style="background-color: #fff0f0">&#39;s3://redshiftstuff/stuff.txt&#39;</span> 
+credentials <span style="background-color: #fff0f0">&#39;aws_iam_role=arn:aws:iam::XXXXXXXX:role/RedShiftS3&#39;</span>
+<span style="color: #008800; font-weight: bold">delimiter</span> <span style="background-color: #fff0f0">&#39;,&#39;</span>;
+</pre></div>
+
+  <h3> Post this, the database was ready to be used for analytical querying by the client to get insights about the patent filing and patent analytics in the field of their interest. Prior to this solution, there was no existing solution of bringing together the different patent databases and creation of a single analytical point. Sample analytical queries that were run using Postgres on the Aginity workbench were : </h3>
+  
+  <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-weight: bold">SELECT</span> <span style="color: #333333">*</span> <span style="color: #008800; font-weight: bold">FROM</span> patents
+<span style="color: #008800; font-weight: bold">WHERE</span> applicants <span style="color: #333333">=</span> <span style="background-color: #fff0f0">&#39;BANK OF AMERICA&#39;</span>
+<span style="color: #008800; font-weight: bold">AND</span> cited_count <span style="color: #333333">&gt;</span> <span style="color: #6600EE; font-weight: bold">2</span>
+<span style="color: #008800; font-weight: bold">AND</span> classification <span style="color: #008800; font-weight: bold">like</span> <span style="background-color: #fff0f0">&#39;%G06%&#39;</span>;
+</pre></div>
+
+  <h3> I also provided documentation to the client as to how they can add data, remove data and how they can look to expand the solution which is based on AWS. </h3>
+  
   
   
 
