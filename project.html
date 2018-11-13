@@ -79,6 +79,8 @@ layout: default
 credentials <span style="background-color: #fff0f0">&#39;aws_iam_role=arn:aws:iam::XXXXXXXX:role/RedShiftS3&#39;</span>
 <span style="color: #008800; font-weight: bold">delimiter</span> <span style="background-color: #fff0f0">&#39;,&#39;</span>;
 </pre></div>
+  
+  <h3> Also, for a few loads of data, I used a manifest, which was basicaly a JSON that tells the what files from S3 to load into the RedShift database. </h3>
 
   <h3> Post this, the database was ready to be used for analytical querying by the client to get insights about the patent filing and patent analytics in the field of their interest. Prior to this solution, there was no existing solution of bringing together the different patent databases and creation of a single analytical point. Sample analytical queries that were run using Postgres on the Aginity workbench were : </h3>
   
